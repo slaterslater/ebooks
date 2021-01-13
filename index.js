@@ -50,13 +50,8 @@ const bookChoice = async () => {
     chapter = await userChoice('chapter: ');
   }
   ebook += getChapterUri(chapter);
-  console.log(ebook);
-  // openOreilly(ebook);
+  return ebook;
 };
-
-const argv = (num) => {
-  return process.argv.slice(num)[0];
-}
 
 const getEbookUri = (book) => {
   let uri = '/home';
@@ -66,18 +61,19 @@ const getEbookUri = (book) => {
 }
 
 const start = (async () => {
+  let ebook, argv = num => process.argv.slice(num)[0];
   switch(process.argv.length) {
     case 3:
       ebook = getEbookUri(argv(2));
-      console.log(ebook);
       break;
     case 4:
-      ebook = getEbookUri(argv(2)) + chpt(argv(3));
-      console.log(ebook);
+      ebook = getEbookUri(argv(2)) + getChapterUri(argv(3));
       break;
     default:
-      bookChoice();
+      ebook = await bookChoice();
   }
+  console.log(ebook);
+  // openOreilly(ebook);
 })();  
 
 /* 2Do
