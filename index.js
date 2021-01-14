@@ -1,7 +1,6 @@
 const {Builder, By, Key, until} = require('selenium-webdriver');
 const readline = require('readline');
 const shelf = require('./books.json');
-// const { env } = require('process');
 require('dotenv').config();
 
 
@@ -55,12 +54,14 @@ const bookChoice = async () => {
 
 const getEbookUri = (book) => {
   let uri = '/home';
-  if ((Number(book)) && book > 0 && book <= shelf.length)
-    uri = `/library/view/${shelf[book-1].name}/${shelf[book-1].isbn}`;
+  if ((Number(book)) && book > 0 && book <= shelf.length){
+    const {name, isbn} = shelf[book-1];
+    uri = `/library/view/${name}/${isbn}`;
+  }
   return uri;
 }
 
-const start = (async () => {
+(async () => {
   let ebook, argv = num => process.argv.slice(num)[0];
   switch(process.argv.length) {
     case 3:
@@ -70,15 +71,10 @@ const start = (async () => {
       ebook = getEbookUri(argv(2)) + getChapterUri(argv(3));
       break;
     default:
-      ebook = await bookChoice();
+      ebook = await bookChoice().catch((err)=>{
+        console.log(`${err}\nsomething went wrong...`);
+      });
   }
-  console.log(ebook);
-  // openOreilly(ebook);
+  // console.log(ebook);
+  openOreilly(ebook);
 })();  
-
-/* 2Do
-save favourite book
-save current chapter for each book
-
-go to current chapter
-*/
