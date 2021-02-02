@@ -4,15 +4,14 @@ const shelf = require("./books.json");
 require('dotenv').config({path: __dirname + '/.env'})
 
 const openOreilly = async (ebook) => {
-  const env = process.env;
-  const uri = `${env.LOGIN}?user=${env.CARD}&pass=${env.PIN}&url=${env.PORTAL}`
-  // console.log(uri) 
+  const { LOGIN, CARD, PIN, PORTAL, LIBRARY } = process.env;
+  const uri = `${LOGIN}?user=${CARD}&pass=${PIN}&url=${PORTAL}`
   let driver = await new Builder().forBrowser("firefox").build();
   try {
     await driver.get(uri);
     await driver.wait(until.elementLocated(By.className("cta")), 3000).click();
     await driver.wait(until.elementLocated(By.className("successModal")), 3000);
-    await driver.get(env.LIBRARY + ebook);
+    await driver.get(LIBRARY + ebook);
   } catch (err) {
     console.log(err);
   }
@@ -79,10 +78,6 @@ const getEbookUri = (book) => {
         console.log(`${err}\nsomething went wrong...`);
       });
   }
-  console.log(ebook);
-  const { LOGIN, CARD, PIN, PORTAL } = process.env;
-  const uri = `${LOGIN}?user=${CARD}&pass=${PIN}&url=${PORTAL}`
-  console.log(uri)
-
-  // openOreilly(ebook);
+  // console.log(ebook);
+  openOreilly(ebook);
 })();
