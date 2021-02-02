@@ -1,15 +1,15 @@
 const { Builder, By, Key, until } = require("selenium-webdriver");
 const readline = require("readline");
 const shelf = require("./books.json");
-require("dotenv").config();
+require('dotenv').config({path: __dirname + '/.env'})
 
 const openOreilly = async (ebook) => {
   const env = process.env;
+  const uri = `${env.LOGIN}?user=${env.CARD}&pass=${env.PIN}&url=${env.PORTAL}`
+  // console.log(uri) 
   let driver = await new Builder().forBrowser("firefox").build();
   try {
-    await driver.get(
-      `${env.LOGIN}?user=${env.CARD}&pass=${env.PIN}&url=${env.PORTAL}`
-    );
+    await driver.get(uri);
     await driver.wait(until.elementLocated(By.className("cta")), 3000).click();
     await driver.wait(until.elementLocated(By.className("successModal")), 3000);
     await driver.get(env.LIBRARY + ebook);
@@ -43,11 +43,11 @@ const userChoice = (option) => {
 
 const bookChoice = async () => {
   let ebook,
-    selection,
+    book,
     chapter = "";
   showBooks();
-  selection = await userChoice(`enter 1-${shelf.length}: `);
-  ebook = getEbookUri(selection);
+  book = await userChoice(`book 1-${shelf.length}: `);
+  ebook = getEbookUri(book);
   if (ebook != "/home") {
     chapter = await userChoice("chapter: ");
   }
@@ -79,6 +79,10 @@ const getEbookUri = (book) => {
         console.log(`${err}\nsomething went wrong...`);
       });
   }
-  // console.log(ebook);
-  openOreilly(ebook);
+  console.log(ebook);
+  const { LOGIN, CARD, PIN, PORTAL } = process.env;
+  const uri = `${LOGIN}?user=${CARD}&pass=${PIN}&url=${PORTAL}`
+  console.log(uri)
+
+  // openOreilly(ebook);
 })();
