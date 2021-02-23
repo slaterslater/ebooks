@@ -9,7 +9,7 @@ const index = '/library/view/javascript-the-definitive/9781491952016/ix01.html';
 (async () => {
   try {
     // const browser = await puppeteer.launch({ headless: false });
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({defaultViewport: null});
     const page = await browser.newPage();
     const final = await browser.newPage();
     // need to set the width of final to optimize reading
@@ -20,7 +20,7 @@ const index = '/library/view/javascript-the-definitive/9781491952016/ix01.html';
     await clearBody(final)
     // get book title and assign to var for pdf filename
     await buildFinal(page, final)
-    await final.pdf({ path: 'final.pdf', format: 'a4' });
+    await final.pdf({ path: 'test.pdf', format: 'a4' });
     await browser.close();
   } catch (err) {
     console.log(err.message) }
@@ -56,7 +56,7 @@ async function buildFinal(page, final){
       })
       console.log('page:', ++count)
       await addContent(page, final)
-      if (next_page) { await page.goto(LIBRARY + next_page) } 
+      if (next_page && count < 8) { await page.goto(LIBRARY + next_page) } 
       else { more = false; }
     } while (more)
   console.log('...finished')
